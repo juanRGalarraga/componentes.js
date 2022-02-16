@@ -26,8 +26,13 @@ function DrawWizardSteps(root_div, user_options = null){
 
     this.options = Object.assign({}, this.default_options, user_options);
 
-    if(this.options == 0){
+    if(this.options.steps == 0){
         return;
+    }
+
+    this.steps_count = this.options.steps;
+    if(typeof this.options.steps == "object"){
+        steps_count = Object.keys(this.options.steps).length;
     }
 
     /**
@@ -59,14 +64,21 @@ function DrawWizardSteps(root_div, user_options = null){
      */
 
     this.insert_steps = () => {
-        for (let i = 1; i <= this.options.steps; i++) {
+
+        for (let i = 1; i <= steps_count; i++) {
             let step_number = document.createElement('DIV');
+
+            let step_number_inner_text = i;
+            if(typeof this.options.steps == "object"){
+                step_number_inner_text = this.options.steps[i];
+            }
+
             step_number.dataset.step = i;
             step_number.style.zIndex = 3;
             step_number.classList.add('wizard_steps_number_js');
 
             let span = document.createElement('span');
-            span.innerText = i;
+            span.innerText = step_number_inner_text;
 
             step_number.insertAdjacentElement('beforeend', span);
 
@@ -109,7 +121,7 @@ function DrawWizardSteps(root_div, user_options = null){
     this.active_step = (step_number) => {
         this.step_active = document.querySelector(`[data-step="${step_number}"]`);
 
-        let progress_line_width = (step_number == this.options.steps) 
+        let progress_line_width = (step_number == steps_count) 
         ? '100%' 
         : (parseInt(this.step_active.offsetLeft, 10) + 10) + 'px';
 
@@ -124,12 +136,12 @@ function DrawWizardSteps(root_div, user_options = null){
 
         this.progress_line_active.style.width = progress_line_width;
 
-        if(this.options.steps > 1 && step_number > 1){
+        if(steps_count > 1 && step_number > 1){
             //Pintar
             this.paint(1, step_number);    
         }
         //Despintar
-        this.paint(step_number, this.options.steps, true);
+        this.paint(step_number, steps_count, true);
 
         this.step_active.classList.add('active', 'actual');
     }
