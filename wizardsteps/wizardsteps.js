@@ -2,29 +2,29 @@
  * Componente para mostrar los pasos en un wizard
  * @author Juan Galarraga
  * @created 2022-02-15
- * @param {string|HTMLDivElement} rootElement - ID del elemento en donde insertar el componente o un elemento DIV
- * @param {object} userOptions - Opciones del componente
+ * @param {string|HTMLDivElement} root_div - ID del elemento en donde insertar el componente o un elemento DIV
+ * @param {object} user_options - Opciones del componente
  *  - steps: cantidad de pasos
- *  - activeColor: color para mostrar los pasos activos
- *  - inactiveColor: color para mostrar los pasos inactivos
+ *  - active_color: color para mostrar los pasos activos
+ *  - inactive_color: color para mostrar los pasos inactivos
  */
 
-function DrawWizardSteps(rootElement, userOptions = null){
+function DrawWizardSteps(root_div, user_options = null){
 
     this.root = null;
     this.main = null;
-    this.line_active = null;
+    this.progress_line_activated = null;
     this.line_inactive = null;
     this.step_active = null;
     this.style_tag = null;
     
-    this.defaultOptions = {
+    this.default_options = {
         steps : 0,
-        activeColor : '#435ebe',
-        inactiveColor : 'rgb(202 202 203)'
+        active_color : '#435ebe',
+        inactive_color : 'rgb(202 202 203)'
     };
 
-    this.options = Object.assign({}, this.defaultOptions, userOptions);
+    this.options = Object.assign({}, this.default_options, user_options);
 
     if(this.options == 0){
         return;
@@ -35,16 +35,23 @@ function DrawWizardSteps(rootElement, userOptions = null){
      * @returns 
      */
     this.draw_main = () => {
-        if(typeof rootElement == "string"){
-            this.root = document.getElementById(rootElement);
-        } else if (rootElement instanceof HTMLDivElement){
-            this.root = rootElement;
+        if(typeof root_div == "string"){
+            this.root = document.getElementById(root_div);
+        } else if (root_div instanceof HTMLDivElement){
+            this.root = root_div;
         } else {
             return;
         }
 
         this.main = document.createElement('DIV');
-        this.main.classList.add('wizard_steps_js_d_flex', 'wizard_steps_js_flex_row', 'wizard_steps_js_justify_content_between', 'wizard_steps_js_px_4', 'wizard_steps_js');
+
+        this.main.classList.add (
+            'wizard_steps_js_d_flex', 
+            'wizard_steps_js_flex_row', 
+            'wizard_steps_js_justify_content_between', 
+            'wizard_steps_js_px_4', 
+            'wizard_steps_js'
+        );
     }
 
     /**
@@ -53,17 +60,17 @@ function DrawWizardSteps(rootElement, userOptions = null){
 
     this.draw_steps = () => {
         for (let i = 1; i <= this.options.steps; i++) {
-            let stepNumber = document.createElement('DIV');
-            stepNumber.dataset.step = i;
-            stepNumber.style.zIndex = 3;
-            stepNumber.classList.add('wizard_steps_number_js');
+            let step_number = document.createElement('DIV');
+            step_number.dataset.step = i;
+            step_number.style.zIndex = 3;
+            step_number.classList.add('wizard_steps_number_js');
 
             let span = document.createElement('span');
             span.innerText = i;
 
-            stepNumber.insertAdjacentElement('beforeend', span);
+            step_number.insertAdjacentElement('beforeend', span);
 
-            this.main.insertAdjacentElement('beforeend', stepNumber);
+            this.main.insertAdjacentElement('beforeend', step_number);
         }
         this.root.insertAdjacentElement('beforeend', this.main);
     }
@@ -73,24 +80,24 @@ function DrawWizardSteps(rootElement, userOptions = null){
      */
 
     this.draw_line = () => {
-        this.line_active = document.createElement('div');
+        this.progress_line_activated = document.createElement('div');
         this.line_inactive = document.createElement('div');
 
-        this.line_active.style.height = '5px';
-        this.line_active.style.width = '0%';
-        this.line_active.style.backgroundColor = this.options.activeColor;
-        this.line_active.style.position = 'relative';
-        this.line_active.style.top = '29px';
-        this.line_active.style.zIndex = '1';
+        this.progress_line_activated.style.height = '5px';
+        this.progress_line_activated.style.width = '0%';
+        this.progress_line_activated.style.backgroundColor = this.options.active_color;
+        this.progress_line_activated.style.position = 'relative';
+        this.progress_line_activated.style.top = '29px';
+        this.progress_line_activated.style.zIndex = '1';
 
         this.line_inactive.style.height = '5px';
         this.line_inactive.style.width = '100%';
-        this.line_inactive.style.backgroundColor = this.options.inactiveColor;
+        this.line_inactive.style.backgroundColor = this.options.inactive_color;
         this.line_inactive.style.position = 'relative';
         this.line_inactive.style.top = '24px';
         this.line_inactive.style.zIndex = '0';
 
-        this.root.insertAdjacentElement('beforeend', this.line_active);
+        this.root.insertAdjacentElement('beforeend', this.progress_line_activated);
         this.root.insertAdjacentElement('beforeend', this.line_inactive);
     }
 
@@ -102,18 +109,18 @@ function DrawWizardSteps(rootElement, userOptions = null){
     this.active_step = (step_number) => {
         this.step_active = document.querySelector(`[data-step="${step_number}"]`);
 
-        let width_line = step_number == this.options.steps ? '100%' : (parseInt(this.step_active.offsetLeft, 10) + 10) + 'px';
+        let progress_line_width = step_number == this.options.steps ? '100%' : (parseInt(this.step_active.offsetLeft, 10) + 10) + 'px';
 
-        this.line_active.animate([
+        this.progress_line_activated.animate([
             {
-                width: this.line_active.style.width
+                width: this.progress_line_activated.style.width
             },
             {
-                width: width_line
+                width: progress_line_width
             }
         ], 500);
 
-        this.line_active.style.width = width_line;
+        this.progress_line_activated.style.width = progress_line_width;
 
         if(this.options.steps > 1 && step_number > 1){
             //Pintar
@@ -148,19 +155,19 @@ function DrawWizardSteps(rootElement, userOptions = null){
         steps = document.querySelectorAll(steps_range);
         
         //Actual -> indica el paso en el que está parado actualmente el usuario
-        steps.removeClassList('actual');
+        steps.remove_class('actual');
 
         if(!unpaint){
-            steps.addClassList('active');
+            steps.add_class('active');
         } else {
-            steps.removeClassList('active');
+            steps.remove_class('active');
         }
     }
     
     /**
      * Estilos propios del componente
      */
-    this.appendStyle = () => {
+    this.append_style = () => {
         this.style_tag = document.createElement('style');
         this.style_tag.setAttribute('media','screen');
         this.style_tag.setAttribute('type','text/css');
@@ -177,7 +184,7 @@ function DrawWizardSteps(rootElement, userOptions = null){
             z-index: 3;
         }
         div.wizard_steps_js > div.wizard_steps_number_js.active{
-            background-color: ${this.options.activeColor} !important;
+            background-color: ${this.options.active_color} !important;
         }
         
         div.wizard_steps_js > div.wizard_line {
@@ -204,7 +211,7 @@ function DrawWizardSteps(rootElement, userOptions = null){
         document.head.appendChild(this.style_tag); 
     }
 
-    this.appendStyle();
+    this.append_style();
     this.draw_main();
     this.draw_line();
     this.draw_steps();
@@ -212,27 +219,27 @@ function DrawWizardSteps(rootElement, userOptions = null){
 
 //Helpers
 
-if(typeof NodeList.prototype.removeClassList !== "function"){
-    NodeList.prototype.removeClassList = function(...classListNames){
-        if(classListNames.length == 0){ return; }
+if(typeof NodeList.prototype.remove_class !== "function"){
+    NodeList.prototype.remove_class = function(...class_list){
+        if(class_list.length == 0){ return; }
         if(this.length == 0){ return; }
     
         this.forEach(node => {
-            classListNames.map(className => {
-                node.classList.remove(className);
+            class_list.map(class_name => {
+                node.classList.remove(class_name);
             });
         });
     }
 }
 
-if(typeof NodeList.prototype.addClassList !== "function"){
-    NodeList.prototype.addClassList = function(...classListNames){
-        if(classListNames.length == 0){ return; }
+if(typeof NodeList.prototype.add_class !== "function"){
+    NodeList.prototype.add_class = function(...class_list){
+        if(class_list.length == 0){ return; }
         if(this.length == 0){ return; }
     
         this.forEach(node => {
-            classListNames.map(className => {
-                node.classList.add(className);
+            class_list.map(class_name => {
+                node.classList.add(class_name);
             });
         });
     }
