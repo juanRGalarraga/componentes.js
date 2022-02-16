@@ -13,8 +13,8 @@ function DrawWizardSteps(root_div, user_options = null){
 
     this.root = null;
     this.main = null;
-    this.progress_line_activated = null;
-    this.line_inactive = null;
+    this.progress_line_active = null;
+    this.progress_line_inactive = null;
     this.step_active = null;
     this.style_tag = null;
     
@@ -34,7 +34,7 @@ function DrawWizardSteps(root_div, user_options = null){
      * Coloca el elemento principal del componente en el DIV root
      * @returns 
      */
-    this.draw_main = () => {
+    this.insert_main_div = () => {
         if(typeof root_div == "string"){
             this.root = document.getElementById(root_div);
         } else if (root_div instanceof HTMLDivElement){
@@ -58,7 +58,7 @@ function DrawWizardSteps(root_div, user_options = null){
      * Crea los números de los pasos
      */
 
-    this.draw_steps = () => {
+    this.insert_steps = () => {
         for (let i = 1; i <= this.options.steps; i++) {
             let step_number = document.createElement('DIV');
             step_number.dataset.step = i;
@@ -79,26 +79,26 @@ function DrawWizardSteps(root_div, user_options = null){
      * Crea las líneas para indicar el progreso del wizard
      */
 
-    this.draw_line = () => {
-        this.progress_line_activated = document.createElement('div');
-        this.line_inactive = document.createElement('div');
+    this.insert_progress_line = () => {
+        this.progress_line_active = document.createElement('div');
+        this.progress_line_inactive = document.createElement('div');
 
-        this.progress_line_activated.style.height = '5px';
-        this.progress_line_activated.style.width = '0%';
-        this.progress_line_activated.style.backgroundColor = this.options.active_color;
-        this.progress_line_activated.style.position = 'relative';
-        this.progress_line_activated.style.top = '29px';
-        this.progress_line_activated.style.zIndex = '1';
+        this.progress_line_active.style.height = '5px';
+        this.progress_line_active.style.width = '0%';
+        this.progress_line_active.style.backgroundColor = this.options.active_color;
+        this.progress_line_active.style.position = 'relative';
+        this.progress_line_active.style.top = '29px';
+        this.progress_line_active.style.zIndex = '1';
 
-        this.line_inactive.style.height = '5px';
-        this.line_inactive.style.width = '100%';
-        this.line_inactive.style.backgroundColor = this.options.inactive_color;
-        this.line_inactive.style.position = 'relative';
-        this.line_inactive.style.top = '24px';
-        this.line_inactive.style.zIndex = '0';
+        this.progress_line_inactive.style.height = '5px';
+        this.progress_line_inactive.style.width = '100%';
+        this.progress_line_inactive.style.backgroundColor = this.options.inactive_color;
+        this.progress_line_inactive.style.position = 'relative';
+        this.progress_line_inactive.style.top = '24px';
+        this.progress_line_inactive.style.zIndex = '0';
 
-        this.root.insertAdjacentElement('beforeend', this.progress_line_activated);
-        this.root.insertAdjacentElement('beforeend', this.line_inactive);
+        this.root.insertAdjacentElement('beforeend', this.progress_line_active);
+        this.root.insertAdjacentElement('beforeend', this.progress_line_inactive);
     }
 
     /**
@@ -109,18 +109,20 @@ function DrawWizardSteps(root_div, user_options = null){
     this.active_step = (step_number) => {
         this.step_active = document.querySelector(`[data-step="${step_number}"]`);
 
-        let progress_line_width = step_number == this.options.steps ? '100%' : (parseInt(this.step_active.offsetLeft, 10) + 10) + 'px';
+        let progress_line_width = (step_number == this.options.steps) 
+        ? '100%' 
+        : (parseInt(this.step_active.offsetLeft, 10) + 10) + 'px';
 
-        this.progress_line_activated.animate([
+        this.progress_line_active.animate([
             {
-                width: this.progress_line_activated.style.width
+                width: this.progress_line_active.style.width
             },
             {
                 width: progress_line_width
             }
         ], 500);
 
-        this.progress_line_activated.style.width = progress_line_width;
+        this.progress_line_active.style.width = progress_line_width;
 
         if(this.options.steps > 1 && step_number > 1){
             //Pintar
@@ -212,9 +214,9 @@ function DrawWizardSteps(root_div, user_options = null){
     }
 
     this.append_style();
-    this.draw_main();
-    this.draw_line();
-    this.draw_steps();
+    this.insert_main_div();
+    this.insert_progress_line();
+    this.insert_steps();
 }
 
 //Helpers
