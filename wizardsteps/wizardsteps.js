@@ -44,7 +44,7 @@ function DrawWizardSteps(rootElement, userOptions = null){
         }
 
         this.main = document.createElement('DIV');
-        this.main.classList.add('d-flex', 'flex-row', 'justify-content-between', 'px-4', 'wizard_steps_js');
+        this.main.classList.add('wizard_steps_js_d_flex', 'wizard_steps_js_flex_row', 'wizard_steps_js_justify_content_between', 'wizard_steps_js_px_4', 'wizard_steps_js');
     }
 
     /**
@@ -185,8 +185,21 @@ function DrawWizardSteps(rootElement, userOptions = null){
             height: 7px;
             width: 100%;
             z-index: 0;
-        }`
-        ;
+        }
+        .wizard_steps_js_px_4 {
+            padding-left: 1.5rem!important;
+            padding-right: 1.5rem!important;
+        }
+        
+        .wizard_steps_js_justify_content_between {
+            justify-content: space-between!important;
+        }
+        .wizard_steps_js_d_flex {
+            display: flex!important;
+        }
+        .wizard_steps_js_flex_row {
+            flex-direction: row!important;
+        }`;
             
         document.head.appendChild(this.style_tag); 
     }
